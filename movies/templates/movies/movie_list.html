@@ -1,0 +1,24 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Фільми{% endblock %}
+
+{% block content %}
+    <h1>Мої фільми</h1>
+
+    {% for movie in movies %}
+        <div class="item">
+            <a href="{% url 'movie_detail' movie.pk %}">{{ movie.name }}</a>
+            {% if movie.director %}
+                — {{ movie.director.name }}
+            {% endif %}
+            <br>
+            {% for genre in movie.genres.all %}
+                <span class="tag">{{ genre.name }}</span>
+            {% endfor %}
+        </div>
+    {% empty %}
+        <p>Поки нічого немає.</p>
+    {% endfor %}
+
+    <p>Усього: {{ movies.count }}</p>
+{% endblock %}

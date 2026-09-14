@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Genre, Movie, Review
+from .models import Director, Genre, Movie, Review
+
+
+@admin.register(Director)
+class DirectorAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+    search_fields = ('name',)
 
 
 @admin.register(Genre)
@@ -10,7 +16,7 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'get_genres')
+    list_display = ('id', 'name', 'director', 'get_genres')
     search_fields = ('name',)
     filter_horizontal = ('genres',)
 

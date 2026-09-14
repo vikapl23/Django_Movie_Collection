@@ -12,9 +12,27 @@ class Genre(models.Model):
         return self.name
 
 
+class Director(models.Model):
+    name = models.CharField(max_length=150)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class Movie(models.Model):
     name = models.CharField(max_length=100)
     genres = models.ManyToManyField(Genre, related_name='movies')
+    director = models.ForeignKey(
+        Director,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='movies',
+    )
+    description = models.TextField(blank=True)
 
     class Meta:
         ordering = ['name']

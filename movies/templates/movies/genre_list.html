@@ -1,0 +1,18 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Жанри{% endblock %}
+
+{% block content %}
+    <h1>Жанри</h1>
+
+    {% for genre in genres %}
+        <div class="item">
+            <strong>{{ genre.name }}</strong>
+            — фільмів: {{ genre.movies.count }}
+        </div>
+    {% empty %}
+        <p>Жанрів ще немає.</p>
+    {% endfor %}
+
+    <p><a href="{% url 'home' %}">&larr; На головну</a></p>
+{% endblock %}

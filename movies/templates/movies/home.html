@@ -1,0 +1,12 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Головна{% endblock %}
+
+{% block content %}
+    <h1>Мій кінощоденник</h1>
+    <p>Розділи проєкту:</p>
+    <ul>
+        <li><a href="{% url 'movie_list' %}">Фільми</a></li>
+        <li><a href="{% url 'genre_list' %}">Жанри</a></li>
+    </ul>
+{% endblock %}
