@@ -1,0 +1,17 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Видалити фільм{% endblock %}
+
+{% block content %}
+    <h1>Видалити «{{ object }}»?</h1>
+
+    <div class="confirm-box">
+        <p class="card-meta">Цю дію неможливо скасувати.</p>
+
+        <form method="post" class="form-actions">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Так, видалити</button>
+            <a class="btn btn-secondary" href="{% url 'movie_detail' object.pk %}">Скасувати</a>
+        </form>
+    </div>
+{% endblock %}

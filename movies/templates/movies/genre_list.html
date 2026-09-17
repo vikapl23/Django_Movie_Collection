@@ -6,13 +6,13 @@
     <h1>Жанри</h1>
 
     {% for genre in genres %}
-        <div class="item">
-            <strong>{{ genre.name }}</strong>
-            — фільмів: {{ genre.movies.count }}
+        <div class="card">
+            <span class="card-title">{{ genre.name }}</span>
+            <span class="badge" style="margin-left: 8px;">{{ genre.movies.count }} фільм(ів)</span>
         </div>
     {% empty %}
-        <p>Жанрів ще немає.</p>
+        <div class="empty-state">Жанрів ще немає.</div>
     {% endfor %}
 
-    <p><a href="{% url 'home' %}">&larr; На головну</a></p>
+    <a class="back-link" href="{% url 'home' %}">&larr; На головну</a>
 {% endblock %}

@@ -4,9 +4,16 @@
 
 {% block content %}
     <h1>Мій кінощоденник</h1>
-    <p>Розділи проєкту:</p>
-    <ul>
-        <li><a href="{% url 'movie_list' %}">Фільми</a></li>
-        <li><a href="{% url 'genre_list' %}">Жанри</a></li>
-    </ul>
+    <p class="card-meta">Особистий щоденник переглянутих і запланованих фільмів.</p>
+
+    <div class="toolbar" style="margin-top: 24px;">
+        <a class="card" style="flex: 1; min-width: 200px; text-decoration: none;" href="{% url 'movie_list' %}">
+            <span class="card-title" style="display:block; font-size: 1.1em;">🎞️ Фільми</span>
+            <span class="card-meta">Переглянути весь список фільмів</span>
+        </a>
+        <a class="card" style="flex: 1; min-width: 200px; text-decoration: none;" href="{% url 'genre_list' %}">
+            <span class="card-title" style="display:block; font-size: 1.1em;">🏷️ Жанри</span>
+            <span class="card-meta">Перегляд фільмів за жанрами</span>
+        </a>
+    </div>
 {% endblock %}

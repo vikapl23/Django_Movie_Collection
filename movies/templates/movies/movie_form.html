@@ -1,0 +1,22 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}{% if object %}Редагувати фільм{% else %}Новий фільм{% endif %}{% endblock %}
+
+{% block content %}
+    <h1>{% if object %}Редагувати «{{ object }}»{% else %}Додати фільм{% endif %}</h1>
+
+    <div class="card">
+        <form method="post" class="styled-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Зберегти</button>
+                {% if object %}
+                    <a class="btn btn-secondary" href="{% url 'movie_detail' object.pk %}">Скасувати</a>
+                {% else %}
+                    <a class="btn btn-secondary" href="{% url 'movie_list' %}">Скасувати</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+{% endblock %}

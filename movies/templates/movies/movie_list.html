@@ -5,20 +5,48 @@
 {% block content %}
     <h1>Мої фільми</h1>
 
+    <div class="toolbar">
+        <a class="btn btn-primary" href="{% url 'movie_create' %}">+ Додати фільм</a>
+        <a class="btn btn-secondary" href="{% url 'movie_top_rated' %}">⭐ Топ фільми (8+)</a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
     {% for movie in movies %}
-        <div class="item">
-            <a href="{% url 'movie_detail' movie.pk %}">{{ movie.name }}</a>
+        <div class="card">
+            <a class="card-title" href="{% url 'movie_detail' movie.pk %}">{{ movie.name }}</a>
             {% if movie.director %}
-                — {{ movie.director.name }}
+                <div class="card-meta">Режисер: {{ movie.director.name }}</div>
             {% endif %}
-            <br>
-            {% for genre in movie.genres.all %}
-                <span class="tag">{{ genre.name }}</span>
-            {% endfor %}
+            {% if movie.genres.all %}
+                <div class="tags">
+                    {% for genre in movie.genres.all %}
+                        <span class="tag">{{ genre.name }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     {% empty %}
-        <p>Поки нічого немає.</p>
+        <div class="empty-state">Поки нічого немає.</div>
     {% endfor %}
 
-    <p>Усього: {{ movies.count }}</p>
+    <p class="page-count">Усього: {{ paginator.count }}</p>
+
+    {% if is_paginated %}
+        <nav class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">&larr; Назад</a>
+            {% endif %}
+
+            <span>Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Далі &rarr;</a>
+            {% endif %}
+        </nav>
+    {% endif %}
 {% endblock %}

@@ -1,5 +1,6 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
 
 
 class Genre(models.Model):
@@ -39,6 +40,9 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('movie_detail', kwargs={'pk': self.pk})
 
 
 class Review(models.Model):
