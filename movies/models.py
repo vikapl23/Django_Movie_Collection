@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -34,6 +35,13 @@ class Movie(models.Model):
         related_name='movies',
     )
     description = models.TextField(blank=True)
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='movies',
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         ordering = ['name']

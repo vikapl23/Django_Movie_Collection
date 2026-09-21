@@ -1,0 +1,18 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Вхід{% endblock %}
+
+{% block content %}
+    <h1>Вхід</h1>
+
+    <div class="auth-box">
+        <form method="post" class="styled-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Увійти</button>
+            </div>
+        </form>
+        <p class="auth-footer">Ще немає акаунту? <a href="{% url 'signup' %}">Зареєструватися</a></p>
+    </div>
+{% endblock %}

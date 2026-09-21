@@ -5,44 +5,46 @@
 {% block content %}
     <h1>{{ movie.name }}</h1>
 
-    <div class="toolbar">
-        <a class="btn btn-secondary" href="{% url 'movie_update' movie.pk %}">✏️ Редагувати</a>
-        <a class="btn btn-danger" href="{% url 'movie_delete' movie.pk %}">🗑️ Видалити</a>
-    </div>
-
     <div class="card">
-        <p><strong>Режисер:</strong> {{ movie.director.name|default:"Невідомо" }}</p>
+        <p class="card-meta"><strong>Режисер:</strong> {{ movie.director.name|default:"Невідомо" }}</p>
 
-        <p><strong>Жанри:</strong><br>
-            {% for genre in movie.genres.all %}
-                <span class="tag">{{ genre.name }}</span>
-            {% empty %}
-                <span class="card-meta">не вказано</span>
-            {% endfor %}
-        </p>
+        {% if movie.genres.all %}
+            <div class="tags">
+                {% for genre in movie.genres.all %}
+                    <span class="tag">{{ genre.name }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
 
         {% if movie.description %}
             <p>{{ movie.description|truncatewords:40 }}</p>
         {% else %}
-            <p><em class="card-meta">Опису поки немає.</em></p>
+            <p class="card-meta"><em>Опису поки немає.</em></p>
+        {% endif %}
+
+        {% if user == movie.owner %}
+            <div class="toolbar">
+                <a class="btn btn-secondary" href="{% url 'movie_update' movie.pk %}">Редагувати</a>
+                <a class="btn btn-danger" href="{% url 'movie_delete' movie.pk %}">Видалити</a>
+            </div>
         {% endif %}
     </div>
 
     <h2>Відгуки</h2>
     {% for review in reviews %}
-        <div class="card">
-            <span class="badge">{{ review.rating|floatformat:1 }}/10</span>
-            <span class="card-meta">— {{ review.comment|truncatewords:15|default:"без коментаря" }}</span>
+        <div class="item">
+            <strong>{{ review.rating|floatformat:1 }}/10</strong>
+            — {{ review.comment|truncatewords:15|default:"без коментаря" }}
         </div>
     {% empty %}
-        <div class="empty-state">Відгуків ще немає.</div>
+        <p class="card-meta">Відгуків ще немає.</p>
     {% endfor %}
 
     {% if other_movies %}
         <h2>Інші фільми цього режисера</h2>
         {% for other in other_movies %}
-            <div class="card">
-                <a class="card-title" href="{% url 'movie_detail' other.pk %}">{{ other.name }}</a>
+            <div class="item">
+                <a href="{% url 'movie_detail' other.pk %}">{{ other.name }}</a>
             </div>
         {% endfor %}
     {% endif %}

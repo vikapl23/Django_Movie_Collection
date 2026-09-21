@@ -39,7 +39,7 @@
             box-shadow: var(--shadow);
         }
 
-        .site-header .header-inner {
+        .header-inner {
             max-width: 900px;
             margin: 0 auto;
             padding: 0 20px;
@@ -47,7 +47,7 @@
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
         }
 
         .brand {
@@ -58,10 +58,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            white-space: nowrap;
         }
 
         nav.main-nav {
             display: flex;
+            align-items: center;
             gap: 6px;
             flex-wrap: wrap;
         }
@@ -76,6 +78,35 @@
         }
 
         nav.main-nav a:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+        }
+
+        nav.main-nav .nav-greeting {
+            color: #eaf1fa;
+            padding: 8px 4px;
+            font-size: 0.92em;
+        }
+
+        nav.main-nav form {
+            display: inline;
+            margin: 0;
+        }
+
+        nav.main-nav .nav-logout {
+            background: none;
+            border: none;
+            color: #eaf1fa;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: 0.95em;
+            cursor: pointer;
+            padding: 8px 14px;
+            border-radius: 999px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        nav.main-nav .nav-logout:hover {
             background: rgba(255, 255, 255, 0.16);
             color: #fff;
         }
@@ -98,6 +129,21 @@
         }
 
         a { color: var(--primary); }
+
+        .item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .item:last-child { border-bottom: none; }
+
+        .item a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .item a:hover { color: var(--primary); }
 
         .card {
             background: var(--surface);
@@ -122,6 +168,11 @@
         }
 
         .card a.card-title:hover { color: var(--primary); }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.05em;
+        }
 
         .card-meta {
             color: var(--text-muted);
@@ -202,16 +253,21 @@
         }
         .btn-link:hover { text-decoration: underline; }
 
-        .alert {
+        .alert, .message {
             padding: 12px 16px;
             border-radius: var(--radius);
             margin-bottom: 14px;
             font-weight: 600;
         }
-        .alert-success {
+        .alert-success, .message--success {
             background: #e8f6ee;
             color: var(--success);
             border: 1px solid #c6e9d4;
+        }
+        .message--error {
+            background: #fdecea;
+            color: var(--danger-dark);
+            border: 1px solid #f6c7c7;
         }
 
         .empty-state {
@@ -262,7 +318,9 @@
             color: var(--primary-dark);
         }
         form.styled-form input[type=text],
+        form.styled-form input[type=password],
         form.styled-form input[type=number],
+        form.styled-form input[type=email],
         form.styled-form textarea,
         form.styled-form select {
             width: 100%;
@@ -296,6 +354,7 @@
 
         .form-actions {
             display: flex;
+            align-items: center;
             gap: 10px;
             margin-top: 20px;
         }
@@ -307,6 +366,28 @@
             box-shadow: var(--shadow);
             padding: 24px;
         }
+
+        .auth-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .auth-footer {
+            margin-top: 16px;
+            color: var(--text-muted);
+            font-size: 0.92em;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .header-inner { flex-direction: column; align-items: flex-start; }
+            nav.main-nav { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -317,10 +398,29 @@
                 <a href="{% url 'home' %}">Головна</a>
                 <a href="{% url 'movie_list' %}">Фільми</a>
                 <a href="{% url 'genre_list' %}">Жанри</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'my_movies' %}">Мої фільми</a>
+                    <span class="nav-greeting">Привіт, {{ user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-logout">Вийти</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Увійти</a>
+                    <a href="{% url 'signup' %}">Реєстрація</a>
+                {% endif %}
             </nav>
         </div>
     </header>
+
     <main class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message message--{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
         {% block content %}{% endblock %}
     </main>
 </body>
