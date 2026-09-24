@@ -1,18 +1,18 @@
 {% extends 'movies/base.html' %}
 
-{% block title %}Реєстрація{% endblock %}
+{% block title %}Sign up{% endblock %}
 
 {% block content %}
-    <h1>Реєстрація</h1>
+    <h1>Sign up</h1>
 
     <div class="auth-box">
         <form method="post" class="styled-form">
             {% csrf_token %}
             {{ form.as_p }}
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Зареєструватися</button>
+                <button type="submit" class="btn btn-primary">Sign up</button>
             </div>
         </form>
-        <p class="auth-footer">Вже маєте акаунт? <a href="{% url 'login' %}">Увійти</a></p>
+        <p class="auth-footer">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
     </div>
 {% endblock %}

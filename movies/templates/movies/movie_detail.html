@@ -6,7 +6,7 @@
     <h1>{{ movie.name }}</h1>
 
     <div class="card">
-        <p class="card-meta"><strong>Режисер:</strong> {{ movie.director.name|default:"Невідомо" }}</p>
+        <p class="card-meta"><strong>Director:</strong> {{ movie.director.name|default:"Unknown" }}</p>
 
         {% if movie.genres.all %}
             <div class="tags">
@@ -19,29 +19,29 @@
         {% if movie.description %}
             <p>{{ movie.description|truncatewords:40 }}</p>
         {% else %}
-            <p class="card-meta"><em>Опису поки немає.</em></p>
+            <p class="card-meta"><em>No description yet.</em></p>
         {% endif %}
 
         {% if user == movie.owner %}
             <div class="toolbar">
-                <a class="btn btn-secondary" href="{% url 'movie_update' movie.pk %}">Редагувати</a>
-                <a class="btn btn-danger" href="{% url 'movie_delete' movie.pk %}">Видалити</a>
+                <a class="btn btn-secondary" href="{% url 'movie_update' movie.pk %}">Edit</a>
+                <a class="btn btn-danger" href="{% url 'movie_delete' movie.pk %}">Delete</a>
             </div>
         {% endif %}
     </div>
 
-    <h2>Відгуки</h2>
+    <h2>Reviews</h2>
     {% for review in reviews %}
         <div class="item">
             <strong>{{ review.rating|floatformat:1 }}/10</strong>
-            — {{ review.comment|truncatewords:15|default:"без коментаря" }}
+            — {{ review.comment|truncatewords:15|default:"no comment" }}
         </div>
     {% empty %}
-        <p class="card-meta">Відгуків ще немає.</p>
+        <p class="card-meta">No reviews yet.</p>
     {% endfor %}
 
     {% if other_movies %}
-        <h2>Інші фільми цього режисера</h2>
+        <h2>More movies by this director</h2>
         {% for other in other_movies %}
             <div class="item">
                 <a href="{% url 'movie_detail' other.pk %}">{{ other.name }}</a>
@@ -49,5 +49,5 @@
         {% endfor %}
     {% endif %}
 
-    <a class="back-link" href="{% url 'movie_list' %}">&larr; Назад до списку</a>
+    <a class="back-link" href="{% url 'movie_list' %}">&larr; Back to list</a>
 {% endblock %}

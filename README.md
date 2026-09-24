@@ -1,122 +1,200 @@
-# Movie Collection Tracker
+# 🎬 My Movie Diary — Django Movie Collection Tracker
 
-Django-застосунок для ведення власної колекції фільмів: жанри, статуси перегляду, оцінки та особисті відгуки.
+A Django web app for keeping a personal movie collection: add movies, tag them with genres and directors, and track reviews with ratings and watch statuses.
 
-## Моделі
-- **Genre** — жанр фільму (Драма, Комедія, Наукова фантастика тощо).
-- **Director** — режисер фільму (`ForeignKey` на модель `Movie`, `on_delete=SET_NULL`).
-- **Movie** — фільм (зв'язок `ManyToManyField` на модель `Genre`, необов'язковий режисер, опис).
-- **Review** — картка відгуку та статусу перегляду (`ForeignKey` на модель `Movie`), що містить оцінку від 1 до 10, випадаючий список статусів (`choices`), текстовий коментар і дату створення (`DateTimeField`).
+## Features
 
-## Сторінки та маршрути
+- Browse all movies with pagination (5 per page)
+- Filter movies by review rating: buttons 1–10 show only movies that have a review with exactly that rating
+- A **Top rated** page listing movies that have at least one review rated 8+
+- Movie detail pages with the director, genres, description, reviews and other movies by the same director
+- Genre list with the number of movies in each genre
+- User accounts: sign up (with automatic login), log in, log out, change password
+- Logged-in users can add movies and see them on the **My movies** page
+- Only a movie's owner can edit or delete it
+- Flash messages after creating and updating a movie
+- Custom admin panel with search, filters, inline editing and a bulk "Mark as completed" action
+- A standalone `queries.py` script that demonstrates Django ORM queries
 
-Веб-інтерфейс побудований на Class-Based Views і має власний (не адмінський) UI зі спільним шаблоном `base.html` та єдиною системою стилів (картки, кнопки, теги, бейджі, форми, пагінація).
+## Tech Stack
 
-| Маршрут | View | Опис |
+- Python 3.12+
+- Django 6.1
+- SQLite
+- [django-environ](https://django-environ.readthedocs.io/) for settings from a `.env` file
+- [WhiteNoise](https://whitenoise.readthedocs.io/) for serving static files
+- Gunicorn (Linux/macOS) or Waitress (Windows) as the production WSGI server
+- [uv](https://docs.astral.sh/uv/) as the package manager
+
+## Project Structure
+
+```
+Django_Movie_Collection/
+├── config/                 # Project settings, root URLs, WSGI/ASGI
+├── movies/                 # Main app
+│   ├── models.py           # Genre, Director, Movie, Review
+│   ├── views.py            # Function-based views and class-based views
+│   ├── admin.py            # Admin configuration
+│   ├── migrations/
+│   └── templates/
+│       ├── movies/         # base, home, movie list/detail/form/delete, genres
+│       └── registration/   # login, signup, password change
+├── screenshots/            # Admin screenshots used in this README
+├── queries.py              # ORM query demo script
+├── .env.example            # Example environment variables
+├── pyproject.toml / uv.lock
+└── requirements.txt
+```
+
+## Models
+
+| Model | Fields | Relations |
 |---|---|---|
-| `/` | `home` | Головна сторінка з переходами до фільмів і жанрів |
-| `/movies/` | `MovieListView` | Список усіх фільмів (з пагінацією) |
-| `/movies/top-rated/` | `TopRatedMoviesView` | Фільми з хоча б одним відгуком з оцінкою 8+ |
-| `/movies/new/` | `MovieCreateView` | Форма додавання нового фільму |
-| `/movies/<pk>/` | `MovieDetailView` | Деталі фільму: режисер, жанри, відгуки, інші фільми режисера |
-| `/movies/<pk>/edit/` | `MovieUpdateView` | Форма редагування фільму |
-| `/movies/<pk>/delete/` | `MovieDeleteView` | Підтвердження видалення фільму |
-| `/genres/` | `genre_list` | Список жанрів із кількістю фільмів у кожному |
-| `/admin/` | Django admin | Адмін-панель |
+| **Genre** | `name` | — |
+| **Director** | `name` | — |
+| **Movie** | `name`, `description` | `genres` → `Genre` (ManyToMany), `director` → `Director` (ForeignKey, optional, `SET_NULL`), `owner` → `User` (ForeignKey, optional, `CASCADE`) |
+| **Review** | `rating` (1–10), `status`, `comment`, `created_at` | `movie` → `Movie` (ForeignKey, `CASCADE`) |
+
+`Review.status` is one of: **Planned**, **Watching**, **Completed**, **Abandoned**.
+
+## Pages & Routes
+
+| Route | View | Access | Description |
+|---|---|---|---|
+| `/` | `home` | Everyone | Home page with links to movies and genres |
+| `/movies/` | `MovieListView` | Everyone | All movies, paginated |
+| `/movies/?rating=<1-10>` | `MovieListView` | Everyone | Movies with a review of exactly that rating |
+| `/movies/top-rated/` | `TopRatedMoviesView` | Everyone | Movies with at least one review rated 8+ |
+| `/movies/my/` | `MyMoviesView` | Logged in | Movies added by the current user |
+| `/movies/new/` | `MovieCreateView` | Logged in | Add a new movie |
+| `/movies/<pk>/` | `MovieDetailView` | Everyone | Movie details, reviews, other movies by the director |
+| `/movies/<pk>/edit/` | `MovieUpdateView` | Owner only | Edit a movie |
+| `/movies/<pk>/delete/` | `MovieDeleteView` | Owner only | Confirm and delete a movie |
+| `/genres/` | `genre_list` | Everyone | Genres with movie counts |
+| `/accounts/signup/` | `SignUpView` | Everyone | Create an account |
+| `/accounts/login/`, `/accounts/logout/`, `/accounts/password_change/` | Django auth views | — | Authentication |
+| `/admin/` | Django admin | Staff | Admin panel |
 
 ---
 
-## Prerequisites & Package Manager
+## Getting Started
 
-This project exclusively uses **uv**, a blazingly fast Python package manager written in Rust. Before starting, check if you have it installed:
+### 1. Install uv
+
+Check whether uv is installed:
 
 ```bash
 uv --version
 ```
 
-### Installing uv (If not installed)
-
-If the command above is not recognized, install `uv` using one of the following official methods for your OS:
+If it isn't, install it:
 
 * **macOS / Linux:**
 
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+  ```bash
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  ```
 
 * **Windows (PowerShell):**
 
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
+  ```powershell
+  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+  ```
 
----
-
-## Quick Start
-
-Setting up the project environment takes just a single command.
-
-1. **Install all dependencies and setup environment:**
+### 2. Install dependencies
 
 ```bash
 uv sync
 ```
 
-*This command automatically creates an isolated virtual environment (`.venv`) and installs all project dependencies.*
+This creates a virtual environment in `.venv` and installs all dependencies. Then activate it:
 
-2. **Activate the virtual environment:**
+* **Windows:** `.venv\Scripts\activate`
+* **macOS / Linux:** `source .venv/bin/activate`
 
-* **Windows (Command Prompt):**
+(Alternatively, use `pip install -r requirements.txt` in any virtual environment.)
 
-```cmd
-.venv\Scripts\activate
-```
+### 3. Configure environment variables
 
-* **macOS / Linux:**
+Copy the example file and edit it:
 
 ```bash
-source .venv/bin/activate
+cp .env.example .env
 ```
 
----
+| Variable | Description | Example |
+|---|---|---|
+| `SECRET_KEY` | Django secret key (required) | a long random string |
+| `DEBUG` | Debug mode (defaults to `False`) | `True` for local development |
+| `ALLOWED_HOSTS` | Comma-separated list of allowed hosts | `127.0.0.1,localhost` |
 
-## Database Setup & Run
+To generate a secret key:
 
-1. **Застосувати міграції:**
+```bash
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+### 4. Set up the database
 
 ```bash
 python manage.py migrate
-```
-
-2. **Створити суперкористувача для адмінки:**
-
-```bash
 python manage.py createsuperuser
 ```
 
-3. **Запустити локальний сервер:**
+`migrate` also fills the database with sample data (migration `0005_english_seed_data`): 30 movies with directors, genres, descriptions and reviews.
+
+### 5. Run the development server
 
 ```bash
 python manage.py runserver
 ```
 
-Панель керування доступна за адресою: `http://127.0.0.1:8000/admin/`
+- Site: http://127.0.0.1:8000/
+- Admin panel: http://127.0.0.1:8000/admin/
 
-4. **Запустити демонстраційний скрипт з ORM-запитами:**
+### 6. Run the ORM query demo (optional)
 
 ```bash
 python queries.py
 ```
 
+The script prints the results of several ORM queries: all reviews, filtering by rating, by a related genre and by status, ordering with slicing, `annotate` with `Count`, and the raw SQL of a query via `.query`.
+
 ---
 
-## Скріншоти адмінки
+## Production
 
-### Жанри
+Collect static files (served by WhiteNoise):
+
+```bash
+python manage.py collectstatic --noinput
+```
+
+Run with a production WSGI server:
+
+* **Linux / macOS:**
+
+  ```bash
+  gunicorn config.wsgi:application
+  ```
+
+* **Windows:**
+
+  ```bash
+  waitress-serve --port=8000 config.wsgi:application
+  ```
+
+Make sure `DEBUG=False` and `ALLOWED_HOSTS` contains your domain.
+
+---
+
+## Admin Screenshots
+
+### Genres
 ![Genres](screenshots/img.png)
 
-### Фільми
+### Movies
 ![Movies](screenshots/img_1.png)
 
-### Відгуки
+### Reviews
 ![Reviews](screenshots/img_2.png)

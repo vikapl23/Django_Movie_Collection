@@ -36,7 +36,7 @@ class ReviewAdmin(admin.ModelAdmin):
     list_editable = ('status', 'rating')
     actions = ['mark_as_completed']
 
-    @admin.action(description='Позначити як переглянуті')
+    @admin.action(description='Mark as completed')
     def mark_as_completed(self, request, queryset):
         updated = queryset.update(status=Review.StatusChoices.COMPLETED)
-        self.message_user(request, f'Оновлено {updated} записів.')
+        self.message_user(request, f'Updated {updated} record(s).')

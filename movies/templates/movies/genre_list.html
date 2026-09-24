@@ -1,18 +1,18 @@
 {% extends 'movies/base.html' %}
 
-{% block title %}Жанри{% endblock %}
+{% block title %}Genres{% endblock %}
 
 {% block content %}
-    <h1>Жанри</h1>
+    <h1>Genres</h1>
 
     {% for genre in genres %}
         <div class="card">
             <span class="card-title">{{ genre.name }}</span>
-            <span class="badge" style="margin-left: 8px;">{{ genre.movies.count }} фільм(ів)</span>
+            <span class="badge" style="margin-left: 8px;">{{ genre.movies.count }} movie{{ genre.movies.count|pluralize }}</span>
         </div>
     {% empty %}
-        <div class="empty-state">Жанрів ще немає.</div>
+        <div class="empty-state">No genres yet.</div>
     {% endfor %}
 
-    <a class="back-link" href="{% url 'home' %}">&larr; На головну</a>
+    <a class="back-link" href="{% url 'home' %}">&larr; Back to home</a>
 {% endblock %}

@@ -55,10 +55,10 @@ class Movie(models.Model):
 
 class Review(models.Model):
     class StatusChoices(models.TextChoices):
-        PLANNED = 'planned', 'В планах'
-        WATCHING = 'watching', 'Дивлюсь'
-        COMPLETED = 'completed', 'Переглянуто'
-        ABANDONED = 'abandoned', 'Покинуто'
+        PLANNED = 'planned', 'Planned'
+        WATCHING = 'watching', 'Watching'
+        COMPLETED = 'completed', 'Completed'
+        ABANDONED = 'abandoned', 'Abandoned'
 
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='reviews')
     rating = models.PositiveSmallIntegerField(

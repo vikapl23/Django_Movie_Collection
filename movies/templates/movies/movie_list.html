@@ -1,26 +1,28 @@
 {% extends 'movies/base.html' %}
 
-{% block title %}Фільми{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-    <h1>Мої фільми</h1>
+    <h1>{{ page_title }}</h1>
 
     <div class="toolbar">
-        <a class="btn btn-primary" href="{% url 'movie_create' %}">+ Додати фільм</a>
-        <a class="btn btn-secondary" href="{% url 'movie_top_rated' %}">⭐ Топ фільми (8+)</a>
+        <a class="btn btn-primary" href="{% url 'movie_create' %}">+ Add movie</a>
+        <a class="btn btn-secondary" href="{% url 'movie_top_rated' %}">⭐ Top rated (8+)</a>
     </div>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success">{{ message }}</div>
+    <nav class="rating-filter">
+        <span class="rating-filter-label">Rating:</span>
+        <a class="chip{% if rating_filter and not current_rating %} chip--active{% endif %}" href="{% url 'movie_list' %}">All</a>
+        {% for r in ratings %}
+            <a class="chip{% if r == current_rating %} chip--active{% endif %}" href="{% url 'movie_list' %}?rating={{ r }}">{{ r }}</a>
         {% endfor %}
-    {% endif %}
+    </nav>
 
     {% for movie in movies %}
         <div class="card">
             <a class="card-title" href="{% url 'movie_detail' movie.pk %}">{{ movie.name }}</a>
             {% if movie.director %}
-                <div class="card-meta">Режисер: {{ movie.director.name }}</div>
+                <div class="card-meta">Director: {{ movie.director.name }}</div>
             {% endif %}
             {% if movie.genres.all %}
                 <div class="tags">
@@ -31,21 +33,21 @@
             {% endif %}
         </div>
     {% empty %}
-        <div class="empty-state">Поки нічого немає.</div>
+        <div class="empty-state">Nothing here yet.</div>
     {% endfor %}
 
-    <p class="page-count">Усього: {{ paginator.count }}</p>
+    <p class="page-count">Total: {{ paginator.count }}</p>
 
     {% if is_paginated %}
         <nav class="pagination">
             {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}">&larr; Назад</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if current_rating %}&rating={{ current_rating }}{% endif %}">&larr; Previous</a>
             {% endif %}
 
-            <span>Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}</span>
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
 
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">Далі &rarr;</a>
+                <a href="?page={{ page_obj.next_page_number }}{% if current_rating %}&rating={{ current_rating }}{% endif %}">Next &rarr;</a>
             {% endif %}
         </nav>
     {% endif %}

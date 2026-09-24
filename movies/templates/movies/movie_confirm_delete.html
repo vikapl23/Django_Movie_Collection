@@ -1,17 +1,17 @@
 {% extends 'movies/base.html' %}
 
-{% block title %}Видалити фільм{% endblock %}
+{% block title %}Delete movie{% endblock %}
 
 {% block content %}
-    <h1>Видалити «{{ object }}»?</h1>
+    <h1>Delete “{{ object }}”?</h1>
 
     <div class="confirm-box">
-        <p class="card-meta">Цю дію неможливо скасувати.</p>
+        <p class="card-meta">This action cannot be undone.</p>
 
         <form method="post" class="form-actions">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Так, видалити</button>
-            <a class="btn btn-secondary" href="{% url 'movie_detail' object.pk %}">Скасувати</a>
+            <button type="submit" class="btn btn-danger">Yes, delete</button>
+            <a class="btn btn-secondary" href="{% url 'movie_detail' object.pk %}">Cancel</a>
         </form>
     </div>
 {% endblock %}
