@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Movie Diary{% endblock %}</title>
+    <style>
+        :root {
+            --primary: #306998;
+            --primary-dark: #24507a;
+            --accent: #ffd43b;
+            --bg: #f4f6f9;
+            --surface: #ffffff;
+            --text: #22262b;
+            --text-muted: #6b7480;
+            --border: #e3e7ed;
+            --danger: #d64545;
+            --danger-dark: #b53838;
+            --success: #2e8b57;
+            --radius: 12px;
+            --shadow: 0 2px 8px rgba(20, 30, 50, 0.06);
+            --shadow-hover: 0 8px 20px rgba(20, 30, 50, 0.10);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .site-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            padding: 18px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .brand {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        nav.main-nav {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        nav.main-nav a {
+            text-decoration: none;
+            color: #eaf1fa;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 999px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        nav.main-nav a:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+        }
+
+        nav.main-nav .nav-greeting {
+            color: #eaf1fa;
+            padding: 8px 4px;
+            font-size: 0.92em;
+        }
+
+        nav.main-nav form {
+            display: inline;
+            margin: 0;
+        }
+
+        nav.main-nav .nav-logout {
+            background: none;
+            border: none;
+            color: #eaf1fa;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: 0.95em;
+            cursor: pointer;
+            padding: 8px 14px;
+            border-radius: 999px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        nav.main-nav .nav-logout:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+        }
+
+        main.container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 20px 60px;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            margin-top: 0;
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            margin-top: 32px;
+            font-size: 1.25em;
+        }
+
+        a { color: var(--primary); }
+
+        .item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .item:last-child { border-bottom: none; }
+
+        .item a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .item a:hover { color: var(--primary); }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            transition: box-shadow 0.15s ease, transform 0.15s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-1px);
+        }
+
+        .card a.card-title {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 700;
+            font-size: 1.05em;
+        }
+
+        .card a.card-title:hover { color: var(--primary); }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.05em;
+        }
+
+        .card-meta {
+            color: var(--text-muted);
+            font-size: 0.92em;
+            margin-top: 2px;
+        }
+
+        .tags { margin-top: 8px; }
+
+        .tag {
+            display: inline-block;
+            background: #eef4fa;
+            color: var(--primary-dark);
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.82em;
+            font-weight: 600;
+            margin-right: 6px;
+            margin-bottom: 4px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: #5c4a00;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.82em;
+            font-weight: 700;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95em;
+            padding: 9px 18px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+        }
+
+        .btn:active { transform: translateY(1px); }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover { background: var(--primary-dark); }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--primary-dark);
+            border-color: var(--border);
+        }
+        .btn-secondary:hover { border-color: var(--primary); }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+        .btn-danger:hover { background: var(--danger-dark); }
+
+        .btn-link {
+            background: none;
+            color: var(--primary);
+            padding: 9px 4px;
+        }
+        .btn-link:hover { text-decoration: underline; }
+
+        .alert, .message {
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+        .alert-success, .message--success {
+            background: #e8f6ee;
+            color: var(--success);
+            border: 1px solid #c6e9d4;
+        }
+        .message--error {
+            background: #fdecea;
+            color: var(--danger-dark);
+            border: 1px solid #f6c7c7;
+        }
+
+        .empty-state {
+            color: var(--text-muted);
+            background: var(--surface);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            text-align: center;
+        }
+
+        .rating-filter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .rating-filter-label {
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9em;
+            text-decoration: none;
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+        .chip:hover { border-color: var(--primary); }
+        .chip--active,
+        .chip--active:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            justify-content: center;
+            margin-top: 24px;
+            color: var(--text-muted);
+        }
+
+        .pagination a {
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--primary);
+        }
+        .pagination a:hover { text-decoration: underline; }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            text-decoration: none;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .back-link:hover { color: var(--primary); }
+
+        .page-count {
+            color: var(--text-muted);
+            font-size: 0.9em;
+            margin-top: -6px;
+        }
+
+        form.styled-form p { margin-bottom: 14px; }
+        form.styled-form label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--primary-dark);
+        }
+        form.styled-form input[type=text],
+        form.styled-form input[type=password],
+        form.styled-form input[type=number],
+        form.styled-form input[type=email],
+        form.styled-form textarea,
+        form.styled-form select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            background: var(--surface);
+            color: var(--text);
+        }
+        form.styled-form select[multiple] { min-height: 110px; }
+        form.styled-form input:focus,
+        form.styled-form textarea:focus,
+        form.styled-form select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(48, 105, 152, 0.15);
+        }
+        form.styled-form .helptext {
+            color: var(--text-muted);
+            font-size: 0.85em;
+        }
+        form.styled-form ul.errorlist {
+            color: var(--danger);
+            font-size: 0.88em;
+            margin: 4px 0 0;
+            padding-left: 18px;
+            list-style: none;
+        }
+
+        .form-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .confirm-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+
+        .auth-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .auth-footer {
+            margin-top: 16px;
+            color: var(--text-muted);
+            font-size: 0.92em;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .header-inner { flex-direction: column; align-items: flex-start; }
+            nav.main-nav { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="{% url 'home' %}">🎬 My Movie Diary</a>
+            <nav class="main-nav">
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'movie_list' %}">Movies</a>
+                <a href="{% url 'genre_list' %}">Genres</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'my_movies' %}">My movies</a>
+                    <span class="nav-greeting">Hi, {{ user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-logout">Log out</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Log in</a>
+                    <a href="{% url 'signup' %}">Sign up</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message message--{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Genre, Movie, Review
+from .models import Director, Genre, Movie, Review
+
+
+@admin.register(Director)
+class DirectorAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+    search_fields = ('name',)
 
 
 @admin.register(Genre)
@@ -10,7 +16,7 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'get_genres')
+    list_display = ('id', 'name', 'director', 'get_genres')
     search_fields = ('name',)
     filter_horizontal = ('genres',)
 
@@ -30,7 +36,7 @@ class ReviewAdmin(admin.ModelAdmin):
     list_editable = ('status', 'rating')
     actions = ['mark_as_completed']
 
-    @admin.action(description='Позначити як переглянуті')
+    @admin.action(description='Mark as completed')
     def mark_as_completed(self, request, queryset):
         updated = queryset.update(status=Review.StatusChoices.COMPLETED)
-        self.message_user(request, f'Оновлено {updated} записів.')
+        self.message_user(request, f'Updated {updated} record(s).')

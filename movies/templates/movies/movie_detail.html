@@ -1,0 +1,53 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}{{ movie.name }}{% endblock %}
+
+{% block content %}
+    <h1>{{ movie.name }}</h1>
+
+    <div class="card">
+        <p class="card-meta"><strong>Director:</strong> {{ movie.director.name|default:"Unknown" }}</p>
+
+        {% if movie.genres.all %}
+            <div class="tags">
+                {% for genre in movie.genres.all %}
+                    <span class="tag">{{ genre.name }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if movie.description %}
+            <p>{{ movie.description|truncatewords:40 }}</p>
+        {% else %}
+            <p class="card-meta"><em>No description yet.</em></p>
+        {% endif %}
+
+        {% if user == movie.owner %}
+            <div class="toolbar">
+                <a class="btn btn-secondary" href="{% url 'movie_update' movie.pk %}">Edit</a>
+                <a class="btn btn-danger" href="{% url 'movie_delete' movie.pk %}">Delete</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <h2>Reviews</h2>
+    {% for review in reviews %}
+        <div class="item">
+            <strong>{{ review.rating|floatformat:1 }}/10</strong>
+            — {{ review.comment|truncatewords:15|default:"no comment" }}
+        </div>
+    {% empty %}
+        <p class="card-meta">No reviews yet.</p>
+    {% endfor %}
+
+    {% if other_movies %}
+        <h2>More movies by this director</h2>
+        {% for other in other_movies %}
+            <div class="item">
+                <a href="{% url 'movie_detail' other.pk %}">{{ other.name }}</a>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <a class="back-link" href="{% url 'movie_list' %}">&larr; Back to list</a>
+{% endblock %}

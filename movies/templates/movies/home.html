@@ -1,0 +1,19 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h1>My Movie Diary</h1>
+    <p class="card-meta">A personal diary of movies you have watched and plan to watch.</p>
+
+    <div class="toolbar" style="margin-top: 24px;">
+        <a class="card" style="flex: 1; min-width: 200px; text-decoration: none;" href="{% url 'movie_list' %}">
+            <span class="card-title" style="display:block; font-size: 1.1em;">🎞️ Movies</span>
+            <span class="card-meta">Browse the full list of movies</span>
+        </a>
+        <a class="card" style="flex: 1; min-width: 200px; text-decoration: none;" href="{% url 'genre_list' %}">
+            <span class="card-title" style="display:block; font-size: 1.1em;">🏷️ Genres</span>
+            <span class="card-meta">Browse movies by genre</span>
+        </a>
+    </div>
+{% endblock %}
